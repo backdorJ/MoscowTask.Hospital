@@ -1,11 +1,11 @@
 using MoscowTask.Contracts.Enums;
 
-namespace MoscowTask.Contracts.PatientRequests.GetPatientById;
+namespace MoscowTask.Contracts.Requests.PatientRequests;
 
 /// <summary>
-/// Ответ на запрос о получении пациента по идентификатору
+/// Базовый ответ для пациента
 /// </summary>
-public class GetPatientByIdResponse
+public class BasePatientResponse
 {
     /// <summary>
     /// Идентификатор
@@ -46,9 +46,4 @@ public class GetPatientByIdResponse
     /// Номер участка
     /// </summary>
     public string NumberPlot { get; set; } = default!;
-
-    /// <summary>
-    /// Идентификатор участка
-    /// </summary>
-    public Guid PlotId { get; set; }
 }

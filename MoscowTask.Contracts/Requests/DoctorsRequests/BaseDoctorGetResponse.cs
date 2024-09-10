@@ -1,9 +1,9 @@
-namespace MoscowTask.Contracts.DoctorsRequests.GetDoctorById;
+namespace MoscowTask.Contracts.Requests.DoctorsRequests;
 
 /// <summary>
-/// Ответ на запрос о получение доктора
+/// Базовый ответ для доктора
 /// </summary>
-public class GetDoctorByIdResponse
+public class BaseDoctorGetResponse
 {
     /// <summary>
     /// Идентификатор доктора
@@ -24,11 +24,6 @@ public class GetDoctorByIdResponse
     /// Отчество
     /// </summary>
     public string? Patronymic { get; set; }
-    
-    /// <summary>
-    /// Идентификатор кабинета
-    /// </summary>
-    public Guid OfficeId { get; set; }
 
     /// <summary>
     /// Номер кабинета
@@ -36,19 +31,9 @@ public class GetDoctorByIdResponse
     public string OfficeNumber { get; set; } = default!;
 
     /// <summary>
-    /// Идентификатор специализации
-    /// </summary>
-    public Guid SpecializationId { get; set; }
-
-    /// <summary>
     /// Название специализации
     /// </summary>
     public string SpecializationName { get; set; } = default!;
-
-    /// <summary>
-    /// Идентификатор участка
-    /// </summary>
-    public Guid PlotId { get; set; }
 
     /// <summary>
     /// Название участка

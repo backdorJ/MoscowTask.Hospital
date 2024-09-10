@@ -40,3 +40,9 @@ public interface IDbContext
     /// <returns>Кол-во затронутых сущностей</returns>
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
+
+public interface IDbContext<TEntity>
+    where TEntity : class
+{
+    DbSet<TEntity> Entities { get; set; } 
+}

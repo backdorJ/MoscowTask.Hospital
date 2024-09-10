@@ -1,17 +1,20 @@
 using MoscowTask.Contracts.Constants;
+using MoscowTask.Contracts.DoctorsRequests.GetDoctors;
+using MoscowTask.Contracts.Requests.DoctorsRequests.GetDoctors;
+using MoscowTask.Core.Abstractions;
 
-namespace MoscowTask.Contracts.DoctorsRequests.GetDoctors;
+namespace MoscowTask.Contracts.PatientRequests.GetPatients;
 
 /// <summary>
-/// Запрос на получение докторов
+/// Запрос на получение пациентов
 /// </summary>
-public class GetDoctorsRequest
+public class GetPatientsRequest : IPaginationQuery, IOrderByQuery
 {
     private int _pageNumber;
     private int _pageSize;
     private string _orderBy;
 
-    public GetDoctorsRequest()
+    public GetPatientsRequest()
     {
         _pageNumber = PaginationDefaults.PageNumber;
         _pageSize = PaginationDefaults.PageSize;

@@ -1,13 +1,15 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MoscowTask.Core.Abstractions;
+using MoscowTask.Core.Entities;
+using MoscowTask.Core.Exceptions;
 
 namespace MoscowTask.Core.Requests.DoctorRequests.DeleteDoctor;
 
 /// <summary>
 /// Обработчик для <see cref="DeleteDoctorCommand"/>
 /// </summary>
-public class DeleteDoctorCommandHandler : IRequestHandler<DeleteDoctorCommand>
+public class DeleteDoctorCommandHandler : CommandHandlerBase<DeleteDoctorCommand, Unit>
 {
     private readonly IDbContext _dbContext;
 
@@ -19,15 +21,16 @@ public class DeleteDoctorCommandHandler : IRequestHandler<DeleteDoctorCommand>
         => _dbContext = dbContext;
 
     /// <inheritdoc />
-    public async Task Handle(DeleteDoctorCommand request, CancellationToken cancellationToken)
+    protected override async Task<Unit> GetResponse(DeleteDoctorCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(command.Id);
         
         var doctor = await _dbContext.Doctors
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-            ?? throw new ArgumentNullException(nameof(request.Id));
+            .FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken)
+            ?? throw new EntityNotFoundException<Doctor>(command.Id.Value);
 
         _dbContext.Doctors.Remove(doctor);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        return default!;
     }
 }

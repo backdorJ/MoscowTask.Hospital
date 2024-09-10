@@ -1,14 +1,16 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MoscowTask.Contracts.PatientRequests.GetPatientById;
+using MoscowTask.Contracts.Requests.PatientRequests.GetPatientById;
 using MoscowTask.Core.Abstractions;
+using MoscowTask.Core.Entities;
+using MoscowTask.Core.Exceptions;
 
 namespace MoscowTask.Core.Requests.PatientRequests.GetPatientById;
 
 /// <summary>
 /// Обработчик для <see cref="GetPatientByIdQuery"/>
 /// </summary>
-public class GetPatientByIdQueryHandler : IRequestHandler<GetPatientByIdQuery, GetPatientByIdResponse>
+public class GetPatientByIdQueryHandler : QueryHandlerBase<GetPatientByIdQuery, GetPatientByIdResponse>
 {
     private readonly IDbContext _dbContext;
 
@@ -20,24 +22,20 @@ public class GetPatientByIdQueryHandler : IRequestHandler<GetPatientByIdQuery, G
         => _dbContext = dbContext;
     
     /// <inheritdoc />
-    public async Task<GetPatientByIdResponse> Handle(GetPatientByIdQuery request, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-
-        return await _dbContext.Patients
-            .Select(x => new GetPatientByIdResponse
-            {
-                Id = x.Id,
-                Surname = x.Surname,
-                Name = x.Name,
-                Patronymic = x.Patronymic,
-                Address = x.Address,
-                Birthday = x.Birthday,
-                Gender = x.Gender,
-                NumberPlot = x.Plot!.Number,
-                PlotId = x.PlotId
-            })
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-            ?? throw new ArgumentNullException(nameof(request.Id));
-    }
+    protected override async Task<GetPatientByIdResponse> GetResponse(GetPatientByIdQuery query, CancellationToken cancellationToken)
+        => await _dbContext.Patients
+               .Select(x => new GetPatientByIdResponse
+               {
+                   Id = x.Id,
+                   Surname = x.Surname,
+                   Name = x.Name,
+                   Patronymic = x.Patronymic,
+                   Address = x.Address,
+                   Birthday = x.Birthday,
+                   Gender = x.Gender,
+                   NumberPlot = x.Plot!.Number,
+                   PlotId = x.PlotId
+               })
+               .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken)
+           ?? throw new EntityNotFoundException<Patient>(query.Id ?? throw new ArgumentNullException(nameof(query)));
 }

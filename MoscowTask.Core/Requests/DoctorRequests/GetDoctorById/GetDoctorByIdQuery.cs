@@ -1,22 +1,18 @@
-using MediatR;
-using MoscowTask.Contracts.DoctorsRequests.GetDoctorById;
+using MoscowTask.Contracts.Requests.DoctorsRequests.GetDoctorById;
 
 namespace MoscowTask.Core.Requests.DoctorRequests.GetDoctorById;
 
 /// <summary>
 /// Запрос на получение доктора
 /// </summary>
-public class GetDoctorByIdQuery : IRequest<GetDoctorByIdResponse>
+public class GetDoctorByIdQuery : Query<GetDoctorByIdResponse>
 {
     /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="id">Идентификатор</param>
     public GetDoctorByIdQuery(Guid id)
-        => Id = id;
-
-    /// <summary>
-    /// Идентификатор доктора
-    /// </summary>
-    public Guid Id { get; set; }
+        : base(id)
+    {
+    }
 }

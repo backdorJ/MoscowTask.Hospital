@@ -1,3 +1,5 @@
+using MoscowTask.Contracts.Requests.PatientRequests.GetPatients;
+
 namespace MoscowTask.Contracts.PatientRequests.GetPatients;
 
 /// <summary>

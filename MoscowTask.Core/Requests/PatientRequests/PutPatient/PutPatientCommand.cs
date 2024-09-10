@@ -1,22 +1,20 @@
 using MediatR;
-using MoscowTask.Contracts.PatientRequests.PutPatient;
+using MoscowTask.Contracts.Requests.PatientRequests.PutPatient;
 
 namespace MoscowTask.Core.Requests.PatientRequests.PutPatient;
 
 /// <summary>
 /// Запрос на изменение пациента
 /// </summary>
-public class PutPatientCommand : PutPatientRequest, IRequest
+public class PutPatientCommand : CommandBase<Unit, PutPatientRequest>
 {
     /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="id">Идентификатор</param>
-    public PutPatientCommand(Guid id)
-        => Id = id;
-
-    /// <summary>
-    /// Идентификатор
-    /// </summary>
-    public Guid Id { get; }
+    /// <param name="request">Запрос</param>
+    public PutPatientCommand(Guid id, PutPatientRequest request)
+        : base(request, id)
+    {
+    }
 }

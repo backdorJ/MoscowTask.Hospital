@@ -1,7 +1,6 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MoscowTask.Contracts.Enums;
 using MoscowTask.Contracts.PatientRequests.GetPatients;
+using MoscowTask.Contracts.Requests.PatientRequests.GetPatients;
 using MoscowTask.Core.Abstractions;
 using MoscowTask.Core.QueryableExtensions;
 
@@ -10,7 +9,7 @@ namespace MoscowTask.Core.Requests.PatientRequests.GetPatients;
 /// <summary>
 /// Обработчик для <see cref="GetPatientsQuery"/>
 /// </summary>
-public class GetPatientsQueryHandler : IRequestHandler<GetPatientsQuery, GetPatientsResponse>
+public class GetPatientsQueryHandler : QueryHandlerBase<GetPatientsQuery, GetPatientsResponse>
 {
     private readonly IDbContext _dbContext;
 
@@ -22,15 +21,15 @@ public class GetPatientsQueryHandler : IRequestHandler<GetPatientsQuery, GetPati
         => _dbContext = dbContext;
 
     /// <inheritdoc />
-    public async Task<GetPatientsResponse> Handle(GetPatientsQuery request, CancellationToken cancellationToken)
+    protected override async Task<GetPatientsResponse> GetResponse(GetPatientsQuery query, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(query.Request);
+        var request = query.Request;
+        var patients = _dbContext.Patients;
 
-        var query = _dbContext.Patients;
+        var totalCount = await patients.CountAsync(cancellationToken);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var result = await query
+        var result = await patients
             .Select(x => new GetPatientsResponseItem
             {
                 Id = x.Id,

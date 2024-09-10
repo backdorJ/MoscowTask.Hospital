@@ -1,15 +1,16 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MoscowTask.Contracts.PatientRequests.PostPatient;
+using MoscowTask.Contracts.Requests;
 using MoscowTask.Core.Abstractions;
 using MoscowTask.Core.Entities;
+using MoscowTask.Core.Exceptions;
 
 namespace MoscowTask.Core.Requests.PatientRequests.PostPatient;
 
 /// <summary>
 /// Обработчик для <see cref="PostPatientCommand"/>
 /// </summary>
-public class PostPatientCommandHandler : IRequestHandler<PostPatientCommand, PostPatientResponse>
+public class PostPatientCommandHandler : CommandHandlerBase<PostPatientCommand, BasePostResponse>
 {
     private readonly IDbContext _dbContext;
 
@@ -21,13 +22,16 @@ public class PostPatientCommandHandler : IRequestHandler<PostPatientCommand, Pos
         => _dbContext = dbContext;
 
     /// <inheritdoc />
-    public async Task<PostPatientResponse> Handle(PostPatientCommand request, CancellationToken cancellationToken)
+    protected override async Task<BasePostResponse> GetResponse(
+        PostPatientCommand command,
+        CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(command.CommandRequest);
+        var request = command.CommandRequest;
         
         var plot = await _dbContext.Plots
             .FirstOrDefaultAsync(x => x.Id == request.PlotId, cancellationToken)
-            ?? throw new ArgumentNullException(nameof(request.PlotId));
+            ?? throw new EntityNotFoundException<Plot>(request.PlotId);
 
         var patient = new Patient(
             surname: request.Surname,
@@ -40,6 +44,6 @@ public class PostPatientCommandHandler : IRequestHandler<PostPatientCommand, Pos
         _dbContext.Patients.Add(patient);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new PostPatientResponse(patient.Id);
+        return new BasePostResponse(patient.Id);
     }
 }
